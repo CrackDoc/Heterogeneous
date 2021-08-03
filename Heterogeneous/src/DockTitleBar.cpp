@@ -40,7 +40,6 @@ void CDockTitleBar::Initialize()
 	ui->TitleLbl->setText(m_strTilte);
 	ui->MinBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
 	ui->MaxBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
-	ui->CloseBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 }
 
 void CDockTitleBar::SetDocTitle(const QString& strTitle)
@@ -51,33 +50,33 @@ void CDockTitleBar::SetDocTitle(const QString& strTitle)
 
 void CDockTitleBar::SlotClickedMin()
 {
-	QDockWidget* dw = qobject_cast<QDockWidget*>(parentWidget());
-	Q_ASSERT(dw != 0);
-	dw->setFloating(!dw->isFloating());
-
-	dw->topLevelChanged(true);
-	
+	emit SignalMiniShow();
 }
 
 void CDockTitleBar::SlotClickedFloat()
 {
 	QDockWidget* dw = qobject_cast<QDockWidget*>(parentWidget());
 	Q_ASSERT(dw != 0);
-	dw->setFloating(!dw->isFloating());
-	dw->topLevelChanged(true);
+	dw->setFloating(true);
 }
-
-
 void CDockTitleBar::mouseMoveEvent(QMouseEvent* event)
 {
-	QDockWidget* mWidParent = qobject_cast<QDockWidget*>(parentWidget());
 	// 持续按住才做对应事件
 	if (m_bKeepPressed)
 	{
-		// 将父窗体移动到父窗体之前的位置加上鼠标移动的位置【event->globalPos()- mPntStart】
-		mWidParent->move(mWidParent->geometry().topLeft() + event->globalPos() - m_PntStart);
-		// 将鼠标在屏幕中的位置替换为新的位置
-		m_PntStart = event->globalPos();
+		QDockWidget* mWidParent = qobject_cast<QDockWidget*>(parentWidget());
+		if (mWidParent)
+		{
+			// 将父窗体移动到父窗体之前的位置加上鼠标移动的位置【event->globalPos()- mPntStart】
+			if (!mWidParent->isFloating())
+			{
+				mWidParent->setFloating(true);
+			}
+			mWidParent->move(mWidParent->geometry().topLeft() + event->globalPos() - m_PntStart);
+			// 将鼠标在屏幕中的位置替换为新的位置
+			m_PntStart = event->globalPos();
+		}
+
 	}
 	QWidget::mouseMoveEvent(event);
 }
@@ -92,7 +91,6 @@ void CDockTitleBar::mousePressEvent(QMouseEvent* event)
 		// 记录鼠标在屏幕中的位置
 		m_PntStart = event->globalPos();
 	}
-
 	QWidget::mousePressEvent(event);
 }
 
@@ -105,4 +103,28 @@ void CDockTitleBar::mouseReleaseEvent(QMouseEvent* event)
 		m_bKeepPressed = false;
 	}
 	QWidget::mouseReleaseEvent(event);
+}
+
+void CDockTitleBar::mouseDoubleClickEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+	{
+		QDockWidget* mWidParent = qobject_cast<QDockWidget*>(parentWidget());
+		if (mWidParent)
+		{
+			bool bFloat = mWidParent->isFloating();
+			if (bFloat)
+			{
+				if (mWidParent->isMaximized())
+				{
+					mWidParent->showNormal();
+				}
+				else
+				{
+					mWidParent->showMaximized();
+				}
+			}
+		}
+	}
+	QWidget::mouseDoubleClickEvent(event);
 }

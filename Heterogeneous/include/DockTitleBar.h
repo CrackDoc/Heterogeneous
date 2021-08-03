@@ -24,6 +24,7 @@ protected:
 	void mousePressEvent(QMouseEvent* event);
 	void mouseMoveEvent(QMouseEvent* event);
 	void mouseReleaseEvent(QMouseEvent* event);
+	void mouseDoubleClickEvent(QMouseEvent* event);
 
 public slots:
 	void SlotClickedMin();
@@ -33,6 +34,9 @@ private:
 	QPoint m_PntStart;
 	// 鼠标是否持续按下
 	bool m_bKeepPressed;
+
+signals:
+	void SignalMiniShow();
 
 private:
     Ui::DockTitleBarClass *ui;

@@ -274,7 +274,8 @@ void CHeterogeneous::InitializeModules()
 {
 	GetOrCreateQuiProjectModule()->SetWorkSpaceDir("C:/Qt/Qt5.9.8");
 	GetOrCreateQuiProjectModule()->FlushWorkSpaceDir();
-
+	ui->ProjectWidget->SetDockTitle(QString::fromLocal8Bit("解决方案"));
+	ui->ProjectWidget->SetDockWidget(GetOrCreateQuiProjectModule());
 }
 void CHeterogeneous::SlotCloseWindow()
 {

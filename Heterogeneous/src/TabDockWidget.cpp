@@ -7,6 +7,7 @@ CTabDockWidget::CTabDockWidget(QWidget* parant /*= 0*/, QString strTitle)
 	, m_strTitleName(strTitle)
 	, m_DocTitleBar(new CDockTitleBar(strTitle,this))
 {
+	setMouseTracking(true);
 	Initialize();
 }
 CTabDockWidget::~CTabDockWidget()
@@ -27,4 +28,10 @@ void CTabDockWidget::SetDockTitle(const QString& strTitle)
 void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
 {
 	this->setWidget(pDocWidget);
+}
+
+void CTabDockWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	QDockWidget::mouseMoveEvent(event);
+	setCursor(Qt::ArrowCursor);
 }

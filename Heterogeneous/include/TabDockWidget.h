@@ -2,6 +2,7 @@
 #define TabDockWidget_h__
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QDockWidget>
+#include <QMouseEvent>
 
 class CDockTitleBar;
 class CTabDockWidget :public QDockWidget
@@ -40,6 +41,8 @@ public:
 	 * @return   
 	*/
 	void SetDockWidget(QWidget* pDocWidget);
+protected:
+	void mouseMoveEvent(QMouseEvent* event);
 private:
 	QString m_strTitleName;
 

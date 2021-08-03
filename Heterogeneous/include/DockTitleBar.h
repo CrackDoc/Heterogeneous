@@ -38,5 +38,7 @@ private:
     Ui::DockTitleBarClass *ui;
 
 	QString m_strTilte;
+	// ¸¡¶¯×´Ì¬
+	bool m_bFloat;
 };
 #endif // DockTitleBar_h__

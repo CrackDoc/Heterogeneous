@@ -6,9 +6,10 @@
 
 CDockTitleBar::CDockTitleBar(QString strTitle,QWidget *parent)
     : QWidget(parent)
-    ,ui(new Ui::DockTitleBarClass)
+    , ui(new Ui::DockTitleBarClass)
 	, m_bKeepPressed(false)
 	, m_strTilte(strTitle)
+	, m_bFloat(false)
 {
     ui->setupUi(this);
 
@@ -38,8 +39,8 @@ void CDockTitleBar::Initialize()
 {
 	ui->TitleLbl->setText(m_strTilte);
 	ui->MinBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
-	ui->MaxBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
-	ui->CloseBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+	ui->MaxBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+	ui->CloseBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 }
 
 void CDockTitleBar::SetDocTitle(const QString& strTitle)

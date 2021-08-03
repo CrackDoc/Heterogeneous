@@ -266,8 +266,11 @@ void CHeterogeneous::InitializeDockWidgt()
 	QWidget* Tab1 = new QWidget(contentTab);
 	contentTab->addTab(Tab1, QString::fromLocal8Bit("资源文件"));
 
+	ui->ContentTabWidget->SetDockTitle(QString::fromLocal8Bit("内容"));
+
 	ui->ContentTabWidget->SetDockWidget(contentTab);
 
+	ui->OutPutWidget->SetDockTitle(QString::fromLocal8Bit("输出"));
 
 }
 void CHeterogeneous::InitializeModules()

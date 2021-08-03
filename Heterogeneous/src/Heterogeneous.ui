@@ -59,7 +59,19 @@
       <property name="spacing">
        <number>1</number>
       </property>
-      <item row="0" column="4" rowspan="2">
+      <item row="0" column="2" rowspan="2">
+       <widget class="CTabDockWidget" name="ProjectWidget">
+        <widget class="QWidget" name="dockWidgetContents_3">
+         <property name="styleSheet">
+          <string notr="true">QWidget#dockWidgetContents_3
+{
+	border:1px solid rgb(139, 139, 139)
+}</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="0" column="5" rowspan="2">
        <widget class="QWidget" name="RightToolBtns" native="true">
         <property name="maximumSize">
          <size>
@@ -306,51 +318,27 @@ QPushButton:hover{
         </layout>
        </widget>
       </item>
-      <item row="1" column="3">
-       <widget class="CTabDockWidget" name="OutPutWidget">
-        <widget class="QWidget" name="dockWidgetContents">
-         <property name="styleSheet">
-          <string notr="true">QWidget#dockWidgetContents
+      <item row="0" column="3">
+       <widget class="CTabDockWidget" name="ContentTabWidget">
+        <property name="styleSheet">
+         <string notr="true">QDockWidget#ContentTabWidget
 {
-	border:1px solid rgb(139, 139, 139)
-}</string>
+	border:1px solid rgb(139, 139, 139);
+}
+</string>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents_2">
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
         </widget>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QTabWidget" name="ContentTabWidget">
-        <property name="styleSheet">
-         <string notr="true">QWidget#ContentWidget
-{
-	border:1px solid rgb(139,139,139)
-}</string>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="ContentTabWidgetPage1" native="true">
-         <attribute name="title">
-          <string/>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>页</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>页</string>
-         </attribute>
-        </widget>
-       </widget>
-      </item>
-      <item row="0" column="2" rowspan="2">
-       <widget class="CTabDockWidget" name="ProjectWidget">
-        <widget class="QWidget" name="dockWidgetContents_3">
+      <item row="1" column="3" colspan="2">
+       <widget class="CTabDockWidget" name="OutPutWidget">
+        <widget class="QWidget" name="dockWidgetContents">
          <property name="styleSheet">
-          <string notr="true">QWidget#dockWidgetContents_3
+          <string notr="true">QWidget#dockWidgetContents
 {
 	border:1px solid rgb(139, 139, 139)
 }</string>

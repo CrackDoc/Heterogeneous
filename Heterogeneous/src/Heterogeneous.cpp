@@ -46,6 +46,9 @@ void CHeterogeneous::Initialize()
 
 void CHeterogeneous::InitializeFrameWorksUi()
 {
+
+	this->setCentralWidget(ui->CenterWidget);
+
 	class CTestMenuModule :public IQuiMenuModule
 	{
 	public:
@@ -241,10 +244,31 @@ void CHeterogeneous::InitializeFrameWorksUi()
 	toolBar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString::fromLocal8Bit("向上"));
 	toolBar->addAction(style()->standardIcon(QStyle::SP_ArrowDown), QString::fromLocal8Bit("向下"));
 
+	//QToolBar* toolBar1 = this->addToolBar("");
+
+	//QAction* testAction = new QAction(QString::fromLocal8Bit("测试结果"), toolBar1);
+
+	//QAction* resultAction = new QAction(QString::fromLocal8Bit("综合"), toolBar1);
+
+	//toolBar1->addAction(testAction);
+	//toolBar1->addAction(resultAction);
+
+	//toolBar1->setAllowedAreas(Qt::RightToolBarArea);
+
 }
 void CHeterogeneous::InitializeDockWidgt()
 {
-	this->setCentralWidget(ui->CenterWidget);
+	QTabWidget* contentTab = new QTabWidget(ui->ContentTabWidget);
+	contentTab->setObjectName("contentTab");
+	QWidget* Tab0 = new QWidget(contentTab);
+	contentTab->addTab(Tab0, QString::fromLocal8Bit("项目文件"));
+
+	QWidget* Tab1 = new QWidget(contentTab);
+	contentTab->addTab(Tab1, QString::fromLocal8Bit("资源文件"));
+
+	ui->ContentTabWidget->SetDockWidget(contentTab);
+
+
 }
 void CHeterogeneous::InitializeModules()
 {

@@ -4,7 +4,7 @@
 #include <QtWidgets/QDockWidget>
 #include <QMouseEvent>
 
-class CDockTitleBar;
+class CTitleBar;
 class CTabDockWidget :public QDockWidget
 {
 	Q_OBJECT
@@ -43,10 +43,12 @@ public:
 	void SetDockWidget(QWidget* pDocWidget);
 protected:
 	void mouseMoveEvent(QMouseEvent* event);
+
+	void mousePressEvent(QMouseEvent* event);
 private:
 	QString m_strTitleName;
 
-	CDockTitleBar* m_DocTitleBar;
+	CTitleBar* m_DocTitleBar;
 };
 #endif // TabDockWidget_h__
 

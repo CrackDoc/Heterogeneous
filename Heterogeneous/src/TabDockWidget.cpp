@@ -1,11 +1,11 @@
 #include "TabDockWidget.h"
-#include <DockTitleBar.h>
+#include <TitleBar.h>
 #include <QLayout>
 
 CTabDockWidget::CTabDockWidget(QWidget* parant /*= 0*/, QString strTitle)
 	:QDockWidget(parant)
 	, m_strTitleName(strTitle)
-	, m_DocTitleBar(new CDockTitleBar(strTitle,this))
+	, m_DocTitleBar(new CTitleBar(false,strTitle,this))
 {
 	setMouseTracking(true);
 	Initialize();
@@ -23,7 +23,7 @@ void CTabDockWidget::Initialize()
 
 void CTabDockWidget::SetDockTitle(const QString& strTitle)
 {
-	m_DocTitleBar->SetDocTitle(strTitle);
+	m_DocTitleBar->SetBarTitle(strTitle);
 }
 void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
 {
@@ -32,6 +32,16 @@ void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
 
 void CTabDockWidget::mouseMoveEvent(QMouseEvent* event)
 {
-	QDockWidget::mouseMoveEvent(event);
 	setCursor(Qt::ArrowCursor);
+	QDockWidget::mouseMoveEvent(event);
+}
+
+void CTabDockWidget::mousePressEvent(QMouseEvent* event)
+{
+	// 这个信号重子窗口过来的信号,不继续向上传递,如果外面的父窗口需要这个
+	// 信号就继续向上发送信号
+	if (m_DocTitleBar->GetKeepMousePressed() && !this->isFloating())
+	{
+		this->setFloating(true);
+	}
 }

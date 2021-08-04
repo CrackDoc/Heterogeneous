@@ -1,4 +1,4 @@
-#ifndef TabDockWidget_h__
+﻿#ifndef TabDockWidget_h__
 #define TabDockWidget_h__
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QDockWidget>
@@ -25,7 +25,7 @@ public:
 	/**
 	 * @fn       SetProjectName
 	 * @author   Crack
-	 * @brief    ���ù�������
+	 * @brief    设置工程名称
 	 * @date     2021/7/27 14:41
 	 * @param    
 	 * @return   
@@ -41,6 +41,17 @@ public:
 	 * @return   
 	*/
 	void SetDockWidget(QWidget* pDocWidget);
+
+	/**
+	 * @fn       SetTitleBarEnabled
+	 * @author   JLC
+	 * @brief       
+	 * @date     2021/8/4 10:51
+	 * @param    
+	 * @return   
+	*/
+	void SetTitleBarEnabled(bool bEnable);
+
 protected:
 	void mouseMoveEvent(QMouseEvent* event);
 

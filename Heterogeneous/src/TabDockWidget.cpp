@@ -30,6 +30,11 @@ void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
 	this->setWidget(pDocWidget);
 }
 
+void CTabDockWidget::SetTitleBarEnabled(bool bEnable)
+{
+	m_DocTitleBar->SetTitleBarEnabled(bEnable);
+}
+
 void CTabDockWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	setCursor(Qt::ArrowCursor);

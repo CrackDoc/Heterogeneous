@@ -25,7 +25,7 @@ public:
 
 	bool GetFloatWindow() { return m_bFloatWindow; }
 
-	void SetNoneBar();
+	void SetTitleBarEnabled(bool bEnabled);
 
 protected:
 	void mousePressEvent(QMouseEvent* event);

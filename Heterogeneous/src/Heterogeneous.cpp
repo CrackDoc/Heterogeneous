@@ -268,6 +268,8 @@ void CHeterogeneous::InitializeDockWidgt()
 
 	ui->ContentTabWidget->SetDockTitle(QString::fromLocal8Bit("内容"));
 
+	ui->ContentTabWidget->SetTitleBarEnabled(false);
+
 	ui->ContentTabWidget->SetDockWidget(contentTab);
 
 	ui->OutPutWidget->SetDockTitle(QString::fromLocal8Bit("输出"));

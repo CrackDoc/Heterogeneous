@@ -44,9 +44,17 @@ void CTitleBar::SetFloatWindow(bool bFloat)
 	m_bFloatWindow = bFloat;
 }
 
-void CTitleBar::SetNoneBar()
+void CTitleBar::SetTitleBarEnabled(bool bEnabled)
 {
-	ui->CenterWidget->hide();
+	if (bEnabled)
+	{
+		ui->CenterWidget->show();
+	}
+	else 
+	{
+		ui->CenterWidget->hide();
+	}
+
 }
 
 void CTitleBar::mouseMoveEvent(QMouseEvent* event)

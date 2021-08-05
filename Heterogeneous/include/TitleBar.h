@@ -1,21 +1,32 @@
-#ifndef TitleBar_h__
+﻿#ifndef TitleBar_h__
 #define TitleBar_h__
 
 #include <QtWidgets/QWidget>
+#include <QString>
+#include <QPainter>
+#include <QPaintEvent>
 
-namespace Ui {
-	class TitleBarClass;
-}
+class QHBoxLayout;
+class QLabel;
+class QPushButton;
+
 class CTitleBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    CTitleBar(bool bFloatWnd = true,QString strTitle = "",QWidget *parent = Q_NULLPTR);
+	enum E_BAR_TYPE
+	{
+		e_DockBar,
+		e_ToolBar
+	};
+
+public:
+	CTitleBar(E_BAR_TYPE type = e_DockBar,bool bFloatWnd = true, QString strTitle = "", QWidget* parent = Q_NULLPTR);
 
 	~CTitleBar();
 
-	void Initialize();
+	void Initialize(E_BAR_TYPE type);
 		
 	void SetBarTitle(const QString& strTitle);
 
@@ -25,7 +36,28 @@ public:
 
 	bool GetFloatWindow() { return m_bFloatWindow; }
 
-	void SetTitleBarEnabled(bool bEnabled);
+	E_BAR_TYPE GetBarType(){ return m_eBarType;}
+
+	void SetBarSytle(QString style);
+
+	/**
+	 * @fn       EnabledMove
+	 * @author   Crack
+	 * @brief       
+	 * @date     2021/8/5 13:44
+	 * @param    
+	 * @return   
+	*/
+	void EnabledMove(bool bMove);
+	/**
+	 * @fn       AppendAction
+	 * @author   Crack
+	 * @brief       
+	 * @date     2021/8/5 13:33
+	 * @param    
+	 * @return   
+	*/
+	QPushButton* AppendAction(QIcon InIcon,QString text);
 
 protected:
 	void mousePressEvent(QMouseEvent* event);
@@ -33,10 +65,12 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event);
 	void mouseDoubleClickEvent(QMouseEvent* event);
 
+	void paintEvent(QPaintEvent* event);
+
 private:
-	// ����ϴ��ƶ���ʼʱ�����Ļ��λ��
+	// 鼠标上次移动开始时相对屏幕的位置
 	QPoint m_PntStart;
-	// ����Ƿ��������
+	// 鼠标是否持续按下
 	bool m_bKeepPressed;
 
 signals:
@@ -45,9 +79,10 @@ signals:
 	void SignalCloseWindow();
 
 private:
-    Ui::TitleBarClass *ui;
-	QString m_strTilte;
-
 	bool m_bFloatWindow;
+	QHBoxLayout* m_HLayout;
+	E_BAR_TYPE m_eBarType;
+	QLabel* m_TitleLbl;
+	bool m_bEnabledMove;
 };
 #endif // TitleBar_h__

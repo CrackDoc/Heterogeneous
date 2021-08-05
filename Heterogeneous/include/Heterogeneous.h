@@ -7,6 +7,9 @@
 namespace Ui {
 	class HeterogeneousClass;
 }
+class CQuiCenterWidget;
+class QGridLayout;
+
 class  CHeterogeneous : public QMainWindow
 {
     Q_OBJECT
@@ -105,5 +108,9 @@ private:
 	int  m_nEdgeMargin;     
 	bool m_bMousePress;
 	ERESIZE_TYPE m_EResizeDir;
+
+	CQuiCenterWidget* m_pCenterWidget;
+
+	QGridLayout* m_pCenterGridLayout;
 };
 #endif // Heterogeneous_h__

@@ -1,60 +1,139 @@
 #include "TitleBar.h"
-#include "ui_TitleBar.h"
 #include <QEvent>
 #include <QMouseEvent>
 #include <QStyle>
-CTitleBar::CTitleBar(bool bFloatWnd,QString strTitle,QWidget *parent)
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QSpacerItem>
+
+QString QSTR_BAR_STYLE = "QPushButton{"
+"border: 0px solid #9EA0A4;"
+"background - color: #8B8B8B;"
+"border - radius: 0px;"
+"}"
+"QPushButton:pressed{"
+"padding - right:0px;"
+"padding - bottom:0px;"
+"padding - top:0px;"
+"padding - left:0px;"
+"border: 0px solid #5388f3;"
+"	background:#F0F0F0;"
+"}"
+"QPushButton:!hover{"
+"border: 0px solid #5388f3;"
+"background:#8B8B8B;"
+"}"
+"QPushButton:hover{"
+"border: 0px solid #5388f3;"
+"background:#F0F0F0;"
+"}"
+"QLabel"
+"{"
+"color: rgb(255, 255, 255);"
+"}";
+CTitleBar::CTitleBar(E_BAR_TYPE type,bool bFloatWnd,QString strTitle,QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::TitleBarClass)
 	, m_bKeepPressed(false)
-	, m_strTilte(strTitle)
+	, m_TitleLbl(new QLabel(strTitle,this))
 	, m_bFloatWindow(bFloatWnd)
+	, m_eBarType(type)
+	, m_bEnabledMove(true)
 {
-    ui->setupUi(this);
+	m_HLayout = new QHBoxLayout(this);
 
-	Initialize();
+	m_HLayout->setContentsMargins(2, 1, 1, 1);
 
-	connect(ui->MinBtn, SIGNAL(clicked()), this, SIGNAL(SignalMiniWindow()));
+	m_HLayout->setSpacing(1);
 
-	connect(ui->ClosBtn, SIGNAL(clicked()), this, SIGNAL(SignalMaxWindow()));
-
-	connect(ui->MaxBtn, SIGNAL(clicked()), this, SIGNAL(SignalCloseWindow()));
+	Initialize(m_eBarType);
 
 }
 CTitleBar::~CTitleBar()
 {
 	
 }
-void CTitleBar::Initialize()
+void CTitleBar::Initialize(E_BAR_TYPE type)
 {
-	ui->TitleLbl->setText(m_strTilte);
-	ui->MinBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
-	ui->MaxBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
-	ui->ClosBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+	int size = m_HLayout->count();
+	for (int i = 0; i < size; ++i)
+	{
+		QLayoutItem* item = m_HLayout->itemAt(i);
+		m_HLayout->removeItem(item);
+		if (item != nullptr)
+		{
+			delete item;
+			item = nullptr;
+		}
+	}
+	m_HLayout->addWidget(m_TitleLbl);
+	QSpacerItem* SpaceItem = new QSpacerItem(40, 24, QSizePolicy::Expanding);
+	m_HLayout->addSpacerItem(SpaceItem);
+	if (type == e_DockBar)
+	{
+		//this->setMinimumHeight(25);
+		QPushButton* MinBtn = new QPushButton(this);
+		MinBtn->setFlat(true);
+		MinBtn->resize(QSize(20, 20));
+		QPushButton* MaxBtn = new QPushButton(this);
+		MaxBtn->setFlat(true);
+		MaxBtn->resize(QSize(20, 20));
+		QPushButton* ClosBtn = new QPushButton(this);
+		ClosBtn->setFlat(true);
+		ClosBtn->resize(QSize(20, 20));
+		MinBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
+		MaxBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+		ClosBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+
+		connect(MinBtn, SIGNAL(clicked()), this, SIGNAL(SignalMiniWindow()));
+
+		connect(ClosBtn, SIGNAL(clicked()), this, SIGNAL(SignalMaxWindow()));
+
+		connect(MaxBtn, SIGNAL(clicked()), this, SIGNAL(SignalCloseWindow()));
+
+		m_HLayout->addWidget(MinBtn);
+		m_HLayout->addWidget(MaxBtn);
+		m_HLayout->addWidget(ClosBtn);
+
+		
+	}
+	SetBarSytle(QSTR_BAR_STYLE);
 }
 
 void CTitleBar::SetBarTitle(const QString& strTitle)
 {
-	m_strTilte = strTitle;
-	ui->TitleLbl->setText(m_strTilte);
+	m_TitleLbl->setText(strTitle);
 }
 
 void CTitleBar::SetFloatWindow(bool bFloat)
 {
 	m_bFloatWindow = bFloat;
 }
-
-void CTitleBar::SetTitleBarEnabled(bool bEnabled)
+void CTitleBar::SetBarSytle(QString style)
 {
-	if (bEnabled)
-	{
-		ui->CenterWidget->show();
-	}
-	else 
-	{
-		ui->CenterWidget->hide();
-	}
+	this->setStyleSheet(style);
+}
 
+void CTitleBar::EnabledMove(bool bMove)
+{
+	m_bEnabledMove = bMove;
+}
+
+QPushButton* CTitleBar::AppendAction(QIcon InIcon,QString text)
+{
+	QIcon icon = InIcon;
+	QPushButton* btn = new QPushButton("", this);
+	btn->setIcon(icon);
+	btn->setIconSize(QSize(20, 20));
+	btn->setFlat(true);
+	btn->resize(QSize(20, 20));
+	btn->setToolTip(text);
+
+	int size = m_HLayout->count();
+
+	m_HLayout->insertWidget(size - 1, btn);
+
+	return btn;
 }
 
 void CTitleBar::mouseMoveEvent(QMouseEvent* event)
@@ -75,6 +154,10 @@ void CTitleBar::mouseMoveEvent(QMouseEvent* event)
 
 void CTitleBar::mousePressEvent(QMouseEvent* event)
 {
+	if (!m_bEnabledMove)
+	{
+		return;
+	}
 	// 鼠标左键按下事件
 	if (event->button() == Qt::LeftButton)
 	{
@@ -120,4 +203,16 @@ void CTitleBar::mouseDoubleClickEvent(QMouseEvent* event)
 		}
 	}
 	QWidget::mouseDoubleClickEvent(event);
+}
+void CTitleBar::paintEvent(QPaintEvent* event)
+{
+	Q_UNUSED(event);
+
+	QPainter p(this);
+
+	p.setPen(Qt::NoPen);
+
+	p.setBrush(QColor(139, 139, 139));
+
+	p.drawRect(rect());
 }

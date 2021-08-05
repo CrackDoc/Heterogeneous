@@ -2,27 +2,40 @@
 #include <TitleBar.h>
 #include <QLayout>
 
-CTabDockWidget::CTabDockWidget(QWidget* parant /*= 0*/, QString strTitle)
+CTabDockWidget::CTabDockWidget(CTitleBar::E_BAR_TYPE type,QString strTitle,QWidget* parant)
 	:QDockWidget(parant)
 	, m_strTitleName(strTitle)
-	, m_DocTitleBar(new CTitleBar(false,strTitle,this))
+	, m_DocTitleBar(new CTitleBar(type,false,strTitle,this))
+	, m_EmptyWidget(new QWidget(this))
 {
 	setMouseTracking(true);
 	Initialize();
 }
 CTabDockWidget::~CTabDockWidget()
 {
+	if (m_EmptyWidget != nullptr)
+	{
+		delete m_EmptyWidget;
+		m_EmptyWidget = nullptr;
+	}
+
+	if (m_DocTitleBar != nullptr)
+	{
+		delete m_DocTitleBar;
+		m_DocTitleBar = nullptr;
+	}
 
 }
 
 void CTabDockWidget::Initialize()
 {
 	this->setTitleBarWidget(m_DocTitleBar);
-	this->layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void CTabDockWidget::SetDockTitle(const QString& strTitle)
 {
+	this->setWindowTitle(strTitle);
+
 	m_DocTitleBar->SetBarTitle(strTitle);
 }
 void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
@@ -32,7 +45,23 @@ void CTabDockWidget::SetDockWidget(QWidget* pDocWidget)
 
 void CTabDockWidget::SetTitleBarEnabled(bool bEnable)
 {
-	m_DocTitleBar->SetTitleBarEnabled(bEnable);
+	this->setTitleBarWidget(m_EmptyWidget);
+}
+
+void CTabDockWidget::SetWidgetEnabled(bool bEnable)
+{
+	m_EmptyWidget->setFixedHeight(0);
+	this->setWidget(m_EmptyWidget);
+}
+
+QPushButton* CTabDockWidget::AppendAction(QIcon InIcon, QString text)
+{
+	return m_DocTitleBar->AppendAction(InIcon,text);
+}
+
+void CTabDockWidget::EnabledMove(bool bMove)
+{
+	m_DocTitleBar->EnabledMove(bMove);
 }
 
 void CTabDockWidget::mouseMoveEvent(QMouseEvent* event)

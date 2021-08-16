@@ -1,46 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>HeterogeneousClass</class>
- <widget class="QWidget" name="HeterogeneousClass">
+ <widget class="QMainWindow" name="HeterogeneousClass">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1120</width>
-    <height>800</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>800</width>
-    <height>600</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Heterogeneous</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>1</number>
-   </property>
-   <property name="leftMargin">
-    <number>1</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>1</number>
-   </property>
-   <property name="bottomMargin">
-    <number>1</number>
-   </property>
-  </layout>
+  <widget class="CQuiCenterWidget" name="centralWidget"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CQuiCenterWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">quicenterwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Heterogeneous.qrc"/>
  </resources>

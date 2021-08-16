@@ -19,19 +19,23 @@ CHeterogeneous::CHeterogeneous(QWidget *parent)
 	//重设大小
 	resize(1120, 800);
 
-	m_pCenterWidget = new CQuiCenterWidget(this);
+	//m_pCenterGridLayout = new QGridLayout(this);
 
-	m_pCenterWidget->resize(1120, 800);
-	//m_pCenterWidget->setMinimumSize(QSize(800,600));
-	m_pCenterGridLayout = new QGridLayout(m_pCenterWidget);
+	//m_pCenterGridLayout->setContentsMargins(1, 1, 1, 1);
 
-	m_pCenterGridLayout->setContentsMargins(1, 1, 1, 1);
+	//m_pCenterGridLayout->setHorizontalSpacing(1);
+	//m_pCenterGridLayout->setVerticalSpacing(1);
 
-	m_pCenterWidget->setLayout(m_pCenterGridLayout);
+	//this->setLayout(m_pCenterGridLayout);
 
-	m_pCenterGridLayout->setHorizontalSpacing(1);
-	m_pCenterGridLayout->setVerticalSpacing(1);
+	//m_pCenterWidget = new CQuiCenterWidget(this);
 
+	//m_pCenterWidget->resize(1120, 800);
+
+
+	//m_pCenterGridLayout->addWidget(m_pCenterWidget);
+
+	//this->layout()->addWidget(m_pCenterWidget);
 
     QString qstrWindowTitle = tr("CC Plane VMC vs BFCC Heterogeneous Union");
     this->setWindowTitle(qstrWindowTitle);
@@ -59,9 +63,36 @@ void CHeterogeneous::Initialize()
 	InitializeModules();
 
 }
+
+const QString qStrWndBarStyle =
+"QPushButton{"
+"	border: 0px solid #9EA0A4;"
+"	background - color: #8B8B8B;"
+"	border - radius: 0px;"
+"	color: rgb(255, 255, 255);"
+"}"
+"QPushButton:pressed{"
+"	padding - right:0px;"
+"	padding - bottom:0px;"
+"	padding - top:0px;"
+"	padding - left:0px;"
+"	border: 0px solid #5388f3;"
+"	background:#F0F0F0;"
+"	color: rgb(255, 255, 255);"
+"}"
+"QPushButton:!hover{"
+"	border: 0px solid #5388f3;"
+"	background:#8B8B8B;"
+"	color: rgb(255, 255, 255);"
+"}"
+"QPushButton:hover{"
+"	border: 0px solid #5388f3;"
+"	background:#F0F0F0;"
+"	color: rgb(0, 0, 0);"
+"}";
 void CHeterogeneous::InitializeFrameWorksUi()
 {
-	this->setCentralWidget(m_pCenterWidget);
+	//this->setCentralWidget(m_pCenterWidget);
 
 	class CTestMenuModule :public IQuiMenuModule
 	{
@@ -194,6 +225,10 @@ void CHeterogeneous::InitializeFrameWorksUi()
 	// 设置MenuBar
 	CQuiWndBarModule* pQtWndBar = GetOrCreateQuiWndBarModule();
 
+	pQtWndBar->SetBarBackGroundColor(QColor("#8B8B8B"));
+	pQtWndBar->SetBarSyleSheet(qStrWndBarStyle);
+	pQtWndBar->Initialise();
+
 	QWidget* bar = qobject_cast<QWidget*>(pQtWndBar);
 
 	QMenu* pMenu0 = new QMenu(QString::fromLocal8Bit("文件"));
@@ -234,7 +269,7 @@ void CHeterogeneous::InitializeFrameWorksUi()
 	Module7->SetMenu(pMenu7);
 	pQtWndBar->AppendMenuModule(Module7);
 
-	this->setMenuWidget(bar);
+	setMenuWidget(bar);
 
 	connect(bar, SIGNAL(SignalShowMinWindow()), this, SLOT(SlotShowMinWindow()));
 	connect(bar, SIGNAL(SignalShowMaxWindow()), this, SLOT(SlotShowMaxWindow()));
@@ -243,21 +278,6 @@ void CHeterogeneous::InitializeFrameWorksUi()
 }
 void CHeterogeneous::InitializeDockWidgt()
 {
-	//leftbardockwidget
-	CTabDockWidget* pLeftBarDockWidget = new CTabDockWidget();
-	pLeftBarDockWidget->resize(750,25);
-	//pLeftBarDockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
-	QTabWidget* pLeftTab = new QTabWidget(this);
-	pLeftBarDockWidget->SetDockWidget(pLeftTab);
-	pLeftTab->setContentsMargins(0, 0, 0, 0);
-	pLeftTab->setObjectName("pLeftTab");
-	QWidget* pLeftConent = new QWidget(pLeftTab);
-	pLeftTab->addTab(pLeftConent, QString::fromLocal8Bit("LeftTab"));
-	this->addDockWidget(Qt::LeftDockWidgetArea, pLeftBarDockWidget);
-	pLeftTab->setTabPosition(QTabWidget::TabPosition::West);
-	//pLeftBarDockWidget->SetTitleBarEnabled(false);
-	pLeftBarDockWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Dialog);
-
 	CTabDockWidget* pContentWidget = new CTabDockWidget();
 	pContentWidget->resize(900, 558);
 	QTabWidget* contentTab = new QTabWidget(this);
@@ -275,11 +295,9 @@ void CHeterogeneous::InitializeDockWidgt()
 	pContentWidget->SetDockTitle(QString::fromLocal8Bit("内容"));
 	pContentWidget->SetTitleBarEnabled(false);
 
-	//m_pCenterGridLayout->addWidget(pContentWidget);
-
 	pContentWidget->setMinimumWidth(600);
 	pContentWidget->setMinimumHeight(600);
-	this->setCentralWidget(pContentWidget);
+	setCentralWidget(pContentWidget);
 
 	CTabDockWidget* pOutputWidget = new CTabDockWidget();
 	pOutputWidget->SetDockTitle(QString::fromLocal8Bit("输出"));
@@ -293,7 +311,6 @@ void CHeterogeneous::InitializeDockWidgt()
 
 	CTabDockWidget* pPorjectWidget = new CTabDockWidget();
 	pPorjectWidget->resize(280, 758);
-	//pPorjectWidget->setMaximumWidth(280);
 	GetOrCreateQuiProjectModule()->SetWorkSpaceDir("C:/Qt/Qt5.9.8");
 	GetOrCreateQuiProjectModule()->FlushWorkSpaceDir();
 	pPorjectWidget->SetDockTitle(QString::fromLocal8Bit("解决方案"));
@@ -309,39 +326,23 @@ void CHeterogeneous::InitializeDockWidgt()
 // 	m_pCenterGridLayout->addWidget(pContentWidget, 0, 1, 1, 1);
 // 	m_pCenterGridLayout->addWidget(pOutputWidget, 1, 0, 1, 2);
 	
+	QToolBar* ToolBar = new QToolBar(this);
+	ToolBar->setFixedHeight(25);
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_DirOpenIcon), QString::fromLocal8Bit("文件"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_DriveNetIcon), QString::fromLocal8Bit("网络"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), QString::fromLocal8Bit("保存"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowLeft), QString::fromLocal8Bit("前进"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowRight), QString::fromLocal8Bit("后退"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString::fromLocal8Bit("向上"));
+	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowDown), QString::fromLocal8Bit("向下"));
+	addToolBar(ToolBar);
+	ToolBar->setMovable(false);
 
-
-	CTabDockWidget* ToolBar = new CTabDockWidget(CTitleBar::e_ToolBar);
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_DirOpenIcon), QString::fromLocal8Bit("文件"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_DriveNetIcon), QString::fromLocal8Bit("网络"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_DialogSaveButton), QString::fromLocal8Bit("保存"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_ArrowLeft), QString::fromLocal8Bit("前进"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_ArrowRight), QString::fromLocal8Bit("后退"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_ArrowUp), QString::fromLocal8Bit("向上"));
-	ToolBar->AppendAction(style()->standardIcon(QStyle::SP_ArrowDown), QString::fromLocal8Bit("向下"));
-
-	ToolBar->SetWidgetEnabled(false);
-	ToolBar->EnabledMove(false);
-	ToolBar->setAllowedAreas(Qt::NoDockWidgetArea);
-	//ToolBar->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
-	CTabDockWidget* pOutputWidge2 = new CTabDockWidget();
-	pOutputWidge2->SetDockTitle(QString::fromLocal8Bit("输出2"));
-	pOutputWidge2->resize(900, 200);
-	QWidget* outDocWidget2 = new QWidget(this);
-	outDocWidget2->setObjectName("outDocWidget2");
-	outDocWidget2->setStyleSheet("QWidget#outDocWidget2{border:1px solid rgb(139, 139, 139);}");
-	outDocWidget2->resize(900, 200);
-	pOutputWidge2->SetDockWidget(outDocWidget2);
-	outDocWidget2->setMinimumWidth(200);
-
-	
-	this->addDockWidget(Qt::TopDockWidgetArea, ToolBar);
-//	this->addDockWidget(Qt::LeftDockWidgetArea, pPorjectWidget);
-	splitDockWidget(ToolBar, pPorjectWidget, Qt::Vertical);
-	splitDockWidget(pPorjectWidget, pContentWidget, Qt::Horizontal);
-	splitDockWidget(pContentWidget, pOutputWidge2, Qt::Horizontal);
-	splitDockWidget(pContentWidget, pOutputWidget, Qt::Vertical);
-//	tabifyDockWidget(pContentWidget, pOutputWidget1);
+	addDockWidget(Qt::LeftDockWidgetArea, pPorjectWidget);
+	//splitDockWidget(ToolBar, pPorjectWidget, Qt::Vertical);
+	//splitDockWidget(pPorjectWidget, pContentWidget, Qt::Horizontal);
+	//splitDockWidget(pContentWidget, pOutputWidget, Qt::Vertical);
+    //tabifyDockWidget(pContentWidget, pOutputWidget1);
 }
 void CHeterogeneous::InitializeModules()
 {

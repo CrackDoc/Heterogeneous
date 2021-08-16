@@ -1,7 +1,6 @@
 ﻿#ifndef Heterogeneous_h__
 #define Heterogeneous_h__
 
-#include <QtWidgets/QWidget>
 #include <QtWidgets/QMainWindow>
 #include <QMouseEvent>
 namespace Ui {

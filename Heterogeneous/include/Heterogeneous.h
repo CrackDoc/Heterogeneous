@@ -3,13 +3,15 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QMouseEvent>
+#include "QuiBaseDialog.h"
+
 namespace Ui {
 	class HeterogeneousClass;
 }
 class CQuiCenterWidget;
 class QGridLayout;
 
-class  CHeterogeneous : public QMainWindow
+class  CHeterogeneous : public CQuiBaseDialog
 {
     Q_OBJECT
 
@@ -68,31 +70,7 @@ private:
  	* @return   
 	*/
 	void InitializeModules();
-	/**
-	 * @fn       CheckingEdge
-	 * @author   Crack
-	 * @brief    检测鼠标是否接近窗口边缘   
-	 * @date     2021/8/2 10:14
-	 * @param    
-	 * @return   
-	*/
-	void CheckingEdge(); 
-	/**
-	 * @fn       DragingEdgeResize
-	 * @author   Crack
-	 * @brief    拖动边缘改变窗口 
-	 * @date     2021/8/2 10:10
-	 * @param    
-	 * @return   
-	*/
-	void DragingEdgeResize(QMouseEvent * event,ERESIZE_TYPE type);
 
-protected:
-	void mousePressEvent(QMouseEvent* event);
-	void mouseMoveEvent(QMouseEvent* event);
-	void mouseReleaseEvent(QMouseEvent* event);
-
-	void leaveEvent(QEvent* event);
 public slots:
 
 	void SlotCloseWindow();
@@ -102,14 +80,7 @@ public slots:
 	void SlotShowMinWindow();
 
 private:
-    Ui::HeterogeneousClass *ui;
-	//鼠标检测的边缘距离
-	int  m_nEdgeMargin;     
-	bool m_bMousePress;
-	ERESIZE_TYPE m_EResizeDir;
 
-	CQuiCenterWidget* m_pCenterWidget;
-
-	QGridLayout* m_pCenterGridLayout;
+	CQuiCenterWidget* m_pMainWindow;
 };
 #endif // Heterogeneous_h__

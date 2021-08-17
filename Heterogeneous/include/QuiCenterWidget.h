@@ -1,11 +1,12 @@
 ﻿#ifndef QuiCenterWidget_h__
 #define QuiCenterWidget_h__
 
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QMainWindow>
+#include <QPainter>
 
 class QMouseEvent;
 
-class CQuiCenterWidget : public QWidget
+class CQuiCenterWidget : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -15,5 +16,6 @@ protected:
 	void mousePressEvent(QMouseEvent* event);
 	void mouseMoveEvent(QMouseEvent* event);
 	void mouseReleaseEvent(QMouseEvent* event);
+	void paintEvent(QPaintEvent* event);
 };
 #endif // QuiCenterWidget_h__

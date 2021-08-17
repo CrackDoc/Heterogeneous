@@ -2,7 +2,7 @@
 #include <QMouseEvent>
 
 CQuiCenterWidget::CQuiCenterWidget(QWidget *parent)
-    : QWidget(parent)
+    : QMainWindow(parent)
 {
     setMouseTracking(true);
 }
@@ -10,18 +10,31 @@ CQuiCenterWidget::~CQuiCenterWidget()
 {
 	
 }
-
 void CQuiCenterWidget::mousePressEvent(QMouseEvent* event)
 {
-    QWidget::mousePressEvent(event);
+    QMainWindow::mousePressEvent(event);
 }
 
 void CQuiCenterWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    QWidget::mouseMoveEvent(event);
+	setCursor(Qt::ArrowCursor);
+    QMainWindow::mouseMoveEvent(event);
 }
 
 void CQuiCenterWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-    QWidget::mouseReleaseEvent(event);
+    QMainWindow::mouseReleaseEvent(event);
+}
+
+void CQuiCenterWidget::paintEvent(QPaintEvent* event)
+{
+	//Q_UNUSED(event);
+
+	//QPainter p(this);
+
+	//p.setPen(Qt::NoPen);
+
+	//p.setBrush(QColor(0, 0, 0));
+
+	//p.drawRect(rect());
 }

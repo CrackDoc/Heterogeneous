@@ -1,5 +1,5 @@
 ﻿#include "Heterogeneous.h"
-#include "ui_Heterogeneous.h"
+
 #include "QuiWndBarModule.h"
 #include <QToolBar>
 #include <QIcon>
@@ -8,51 +8,30 @@
 #include <QGridLayout>
 #include "TabDockWidget.h"
 #include <QHBoxLayout>
+#include <QDesktopWidget>
+#include <QApplication>
+#include <QStyle>
+
 CHeterogeneous::CHeterogeneous(QWidget *parent)
-    : QMainWindow(parent)
-    ,ui(new Ui::HeterogeneousClass)
-	, m_nEdgeMargin(2) //设置检测边缘为4
-	, m_EResizeDir(nodir) //初始化检测方向为无
-	, m_bMousePress(false)
+    : CQuiBaseDialog(parent)
+	, m_pMainWindow(new CQuiCenterWidget(this))
 {
-    ui->setupUi(this);
-	//重设大小
+	this->EnableTitleBar(false);
+
+	this->SetDialogWidget(m_pMainWindow);
+	this->EnableDialogStretch(true);
+
 	resize(1120, 800);
 
-	//m_pCenterGridLayout = new QGridLayout(this);
+	QString qstrWindowTitle = tr("CC Plane VMC vs BFCC Heterogeneous Union");
+	this->SetDialogTitle(qstrWindowTitle);
 
-	//m_pCenterGridLayout->setContentsMargins(1, 1, 1, 1);
-
-	//m_pCenterGridLayout->setHorizontalSpacing(1);
-	//m_pCenterGridLayout->setVerticalSpacing(1);
-
-	//this->setLayout(m_pCenterGridLayout);
-
-	//m_pCenterWidget = new CQuiCenterWidget(this);
-
-	//m_pCenterWidget->resize(1120, 800);
-
-
-	//m_pCenterGridLayout->addWidget(m_pCenterWidget);
-
-	//this->layout()->addWidget(m_pCenterWidget);
-
-    QString qstrWindowTitle = tr("CC Plane VMC vs BFCC Heterogeneous Union");
-    this->setWindowTitle(qstrWindowTitle);
-
-	//设置窗体标题栏隐藏并设置位于顶层
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Dialog);
-	setMouseTracking(true);
-
-    Initialize();
+	Initialize();
 }
 CHeterogeneous::~CHeterogeneous()
 {
 	
 }
-
-
-
 void CHeterogeneous::Initialize()
 {
 	//初始化界面框架
@@ -92,8 +71,6 @@ const QString qStrWndBarStyle =
 "}";
 void CHeterogeneous::InitializeFrameWorksUi()
 {
-	//this->setCentralWidget(m_pCenterWidget);
-
 	class CTestMenuModule :public IQuiMenuModule
 	{
 	public:
@@ -229,6 +206,8 @@ void CHeterogeneous::InitializeFrameWorksUi()
 	pQtWndBar->SetBarSyleSheet(qStrWndBarStyle);
 	pQtWndBar->Initialise();
 
+	pQtWndBar->SetGeometryWidget(this);
+
 	QWidget* bar = qobject_cast<QWidget*>(pQtWndBar);
 
 	QMenu* pMenu0 = new QMenu(QString::fromLocal8Bit("文件"));
@@ -269,7 +248,7 @@ void CHeterogeneous::InitializeFrameWorksUi()
 	Module7->SetMenu(pMenu7);
 	pQtWndBar->AppendMenuModule(Module7);
 
-	setMenuWidget(bar);
+	m_pMainWindow->setMenuWidget(bar);
 
 	connect(bar, SIGNAL(SignalShowMinWindow()), this, SLOT(SlotShowMinWindow()));
 	connect(bar, SIGNAL(SignalShowMaxWindow()), this, SLOT(SlotShowMaxWindow()));
@@ -297,7 +276,9 @@ void CHeterogeneous::InitializeDockWidgt()
 
 	pContentWidget->setMinimumWidth(600);
 	pContentWidget->setMinimumHeight(600);
-	setCentralWidget(pContentWidget);
+
+
+	m_pMainWindow->setCentralWidget(pContentWidget);
 
 	CTabDockWidget* pOutputWidget = new CTabDockWidget();
 	pOutputWidget->SetDockTitle(QString::fromLocal8Bit("输出"));
@@ -335,13 +316,13 @@ void CHeterogeneous::InitializeDockWidgt()
 	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowRight), QString::fromLocal8Bit("后退"));
 	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString::fromLocal8Bit("向上"));
 	ToolBar->addAction(style()->standardIcon(QStyle::SP_ArrowDown), QString::fromLocal8Bit("向下"));
-	addToolBar(ToolBar);
+	m_pMainWindow->addToolBar(ToolBar);
 	ToolBar->setMovable(false);
 
-	addDockWidget(Qt::LeftDockWidgetArea, pPorjectWidget);
-	//splitDockWidget(ToolBar, pPorjectWidget, Qt::Vertical);
-	//splitDockWidget(pPorjectWidget, pContentWidget, Qt::Horizontal);
-	//splitDockWidget(pContentWidget, pOutputWidget, Qt::Vertical);
+	m_pMainWindow->addDockWidget(Qt::LeftDockWidgetArea, pPorjectWidget);
+
+	m_pMainWindow->splitDockWidget(pPorjectWidget, pContentWidget, Qt::Horizontal);
+	m_pMainWindow->splitDockWidget(pContentWidget, pOutputWidget, Qt::Vertical);
     //tabifyDockWidget(pContentWidget, pOutputWidget1);
 }
 void CHeterogeneous::InitializeModules()
@@ -354,141 +335,16 @@ void CHeterogeneous::SlotCloseWindow()
 
 void CHeterogeneous::SlotShowMaxWindow()
 {
-	this->showMaximized();
+	QDesktopWidget* desktopWidget = QApplication::desktop();
+	//QRect screenRect = desktopWidget->screenGeometry();  //屏幕区域
+	QRect screenRect = desktopWidget->availableGeometry();  //屏幕区域
+	int w = screenRect.width() + 18;
+	int h = screenRect.height() + 18;
+	showMaximized();
+	setGeometry(-9, -9, w, h);
 }
 
 void CHeterogeneous::SlotShowMinWindow()
 {
 	this->showMinimized();
-}
-
-void CHeterogeneous::mousePressEvent(QMouseEvent* event)
-{
-	event->ignore();
-	if (event->buttons() & Qt::LeftButton)
-	{
-		//setCursor(Qt::ArrowCursor);
-		m_bMousePress = true;
-	}
-	QMainWindow::mousePressEvent(event);
-}
-void CHeterogeneous::mouseMoveEvent(QMouseEvent* event)
-{
-	event->ignore();
-
-	if (m_bMousePress)
-	{
-		if (m_EResizeDir != nodir)
-		{
-			DragingEdgeResize(event,m_EResizeDir);
-		}
-	}
-	else
-	{
-		CheckingEdge();   
-	}
-	QMainWindow::mouseMoveEvent(event);
-}
-void CHeterogeneous::mouseReleaseEvent(QMouseEvent* event)
-{
-	event->ignore();
-	setCursor(Qt::ArrowCursor);
-	m_bMousePress = false;
-	QMainWindow::mouseReleaseEvent(event);
-}
-
-void CHeterogeneous::leaveEvent(QEvent* event)
-{
-	event->ignore();
-	setCursor(Qt::ArrowCursor);
-	m_bMousePress = false;
-	QMainWindow::leaveEvent(event);
-}
-
-void CHeterogeneous::DragingEdgeResize(QMouseEvent* event, ERESIZE_TYPE type)
-{
-	int ptop, pbottom, pleft, pright;                   //窗口上下左右的值
-	ptop = frameGeometry().top();
-	pbottom = frameGeometry().bottom();
-	pleft = frameGeometry().left();
-	pright = frameGeometry().right();
-	if (type & top)
-	{                               //检测更改尺寸方向中包含的上下左右分量
-		ptop = event->globalY();
-	}
-	else if (type & bottom) {
-
-		pbottom = event->globalY();
-
-	}
-	if (type & left)
-	{
-		if (event->globalX() < mapToGlobal(this->rect().topLeft()).x())
-		{
-			pleft = event->globalX();
-		}
-		//检测左右分量
-		if (width() > this->minimumWidth())
-		{
-			pleft = event->globalX();
-		}
-	}
-	else if (type & right)
-	{
-		pright = event->globalX();
-	}
-	setGeometry(QRect(QPoint(pleft, ptop), QPoint(pright, pbottom)));
-
-}
-void CHeterogeneous::CheckingEdge()
-{
-	int diffLeft = abs(cursor().pos().x() - frameGeometry().left());      //计算鼠标距离窗口上下左右有多少距离
-	int diffRight = abs(cursor().pos().x() - frameGeometry().right());
-	int diffTop = abs(cursor().pos().y() - frameGeometry().top());
-	int diffBottom = abs(cursor().pos().y() - frameGeometry().bottom());
-
-	QCursor tempCursor;                                    //获得当前鼠标样式，注意:只能获得当前鼠标样式然后再重新设置鼠标样式
-	tempCursor = cursor();                                 //因为获得的不是鼠标指针，所以不能这样用:cursor().setXXXXX
-
-	if (diffTop < m_nEdgeMargin) {                              //根据 边缘距离 分类改变尺寸的方向
-		if (diffLeft < m_nEdgeMargin) {
-			m_EResizeDir = topLeft;
-			tempCursor.setShape(Qt::SizeFDiagCursor);
-		}
-		else if (diffRight < m_nEdgeMargin) {
-			m_EResizeDir = topRight;
-			tempCursor.setShape(Qt::SizeBDiagCursor);
-		}
-		else {
-			m_EResizeDir = top;
-			tempCursor.setShape(Qt::SizeVerCursor);
-		}
-	}
-	else if (diffBottom < m_nEdgeMargin) {
-		if (diffLeft < m_nEdgeMargin) {
-			m_EResizeDir = bottomLeft;
-			tempCursor.setShape(Qt::SizeBDiagCursor);
-		}
-		else if (diffRight < m_nEdgeMargin) {
-			m_EResizeDir = bottomRight;
-			tempCursor.setShape(Qt::SizeFDiagCursor);
-		}
-		else {
-			m_EResizeDir = bottom;
-			tempCursor.setShape(Qt::SizeVerCursor);
-		}
-	}
-	else if (diffLeft < m_nEdgeMargin) {
-		m_EResizeDir = left;
-		tempCursor.setShape(Qt::SizeHorCursor);
-	}
-	else if (diffRight < m_nEdgeMargin) {
-		m_EResizeDir = right;
-		tempCursor.setShape(Qt::SizeHorCursor);
-	}
-	else {
-		m_EResizeDir = nodir;
-		tempCursor.setShape(Qt::ArrowCursor);
-	}
-	setCursor(tempCursor);                    //重新设置鼠标,主要是改样式
 }

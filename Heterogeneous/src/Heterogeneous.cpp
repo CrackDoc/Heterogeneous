@@ -18,23 +18,27 @@ CHeterogeneous::CHeterogeneous(QWidget *parent)
 	, m_pQuiSystray(new CQuiSystray(this))
 {
 	this->EnableTitleBar(false);
-
 	this->SetDialogWidget(m_pMainWindow);
 	this->EnableDialogStretch(true);
-
+	m_pMainWindow->setCursor(Qt::ArrowCursor);
 	resize(1120, 800);
 
 	QString qstrWindowTitle = tr("CC Plane VMC vs BFCC Heterogeneous Union");
-	this->SetDialogTitle(qstrWindowTitle);
+	//this->SetDialogTitle(qstrWindowTitle);
 
 	Initialize();
 }
 CHeterogeneous::~CHeterogeneous()
 {
-	if (!m_pQuiSystray)
+	if (m_pQuiSystray != nullptr)
 	{
 		delete m_pQuiSystray;
 		m_pQuiSystray = nullptr;
+	}
+	if (m_pMainWindow != nullptr)
+	{
+		delete m_pMainWindow;
+		m_pMainWindow = nullptr;
 	}
 	
 }
@@ -298,7 +302,7 @@ void CHeterogeneous::InitializeDockWidgt()
 
 	CQuiTabDockWidget* pPorjectWidget = new CQuiTabDockWidget();
 	pPorjectWidget->resize(280, 758);
-	GetOrCreateQuiProjectModule()->SetWorkSpaceDir("C:/Qt/Qt5.9.8");
+	GetOrCreateQuiProjectModule()->SetWorkSpaceDir("C:/Qt/Qt5.14.2");
 	GetOrCreateQuiProjectModule()->FlushWorkSpaceDir();
 	pPorjectWidget->SetDockTitle(QString::fromLocal8Bit("解决方案"));
 	pPorjectWidget->SetDockWidget(GetOrCreateQuiProjectModule());
@@ -337,6 +341,7 @@ void CHeterogeneous::InitializeModules()
 void CHeterogeneous::SlotCloseWindow()
 {
 	this->close();
+	emit SignalQuit();
 }
 
 void CHeterogeneous::SlotShowMaxWindow()

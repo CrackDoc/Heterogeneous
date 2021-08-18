@@ -1,20 +1,21 @@
 ﻿#include "Heterogeneous.h"
-
+#include <QtWidgets/QMainWindow>
 #include "QuiWndBarModule.h"
 #include <QToolBar>
 #include <QIcon>
 #include "QuiProjectModule.h"
-#include "QuiCenterWidget.h"
 #include <QGridLayout>
-#include "TabDockWidget.h"
+#include "QuiTabDockWidget.h"
 #include <QHBoxLayout>
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QStyle>
+#include "QuiSystray.h"
 
 CHeterogeneous::CHeterogeneous(QWidget *parent)
-    : CQuiBaseDialog(parent)
-	, m_pMainWindow(new CQuiCenterWidget(this))
+    : CQuiBaseWidget(parent)
+	, m_pMainWindow(new QMainWindow(this))
+	, m_pQuiSystray(new CQuiSystray(this))
 {
 	this->EnableTitleBar(false);
 
@@ -30,6 +31,11 @@ CHeterogeneous::CHeterogeneous(QWidget *parent)
 }
 CHeterogeneous::~CHeterogeneous()
 {
+	if (!m_pQuiSystray)
+	{
+		delete m_pQuiSystray;
+		m_pQuiSystray = nullptr;
+	}
 	
 }
 void CHeterogeneous::Initialize()
@@ -257,7 +263,7 @@ void CHeterogeneous::InitializeFrameWorksUi()
 }
 void CHeterogeneous::InitializeDockWidgt()
 {
-	CTabDockWidget* pContentWidget = new CTabDockWidget();
+	CQuiTabDockWidget* pContentWidget = new CQuiTabDockWidget();
 	pContentWidget->resize(900, 558);
 	QTabWidget* contentTab = new QTabWidget(this);
 	pContentWidget->SetDockWidget(contentTab);
@@ -280,7 +286,7 @@ void CHeterogeneous::InitializeDockWidgt()
 
 	m_pMainWindow->setCentralWidget(pContentWidget);
 
-	CTabDockWidget* pOutputWidget = new CTabDockWidget();
+	CQuiTabDockWidget* pOutputWidget = new CQuiTabDockWidget();
 	pOutputWidget->SetDockTitle(QString::fromLocal8Bit("输出"));
 	pOutputWidget->resize(900, 200);
 	QWidget* outDocWidget = new QWidget(this);
@@ -290,7 +296,7 @@ void CHeterogeneous::InitializeDockWidgt()
 	pOutputWidget->SetDockWidget(outDocWidget);
 	pOutputWidget->setMinimumHeight(150);
 
-	CTabDockWidget* pPorjectWidget = new CTabDockWidget();
+	CQuiTabDockWidget* pPorjectWidget = new CQuiTabDockWidget();
 	pPorjectWidget->resize(280, 758);
 	GetOrCreateQuiProjectModule()->SetWorkSpaceDir("C:/Qt/Qt5.9.8");
 	GetOrCreateQuiProjectModule()->FlushWorkSpaceDir();
@@ -346,5 +352,5 @@ void CHeterogeneous::SlotShowMaxWindow()
 
 void CHeterogeneous::SlotShowMinWindow()
 {
-	this->showMinimized();
+	this->hide();
 }

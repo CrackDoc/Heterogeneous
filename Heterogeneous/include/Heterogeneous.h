@@ -1,17 +1,11 @@
 ﻿#ifndef Heterogeneous_h__
 #define Heterogeneous_h__
 
-#include <QtWidgets/QMainWindow>
-#include <QMouseEvent>
-#include "QuiBaseDialog.h"
+#include "QuiBaseWidget.h"
 
-namespace Ui {
-	class HeterogeneousClass;
-}
-class CQuiCenterWidget;
-class QGridLayout;
-
-class  CHeterogeneous : public CQuiBaseDialog
+class QMainWindow;
+class CQuiSystray;
+class  CHeterogeneous : public CQuiBaseWidget
 {
     Q_OBJECT
 
@@ -81,6 +75,8 @@ public slots:
 
 private:
 
-	CQuiCenterWidget* m_pMainWindow;
+	QMainWindow* m_pMainWindow;
+
+	CQuiSystray* m_pQuiSystray;
 };
 #endif // Heterogeneous_h__

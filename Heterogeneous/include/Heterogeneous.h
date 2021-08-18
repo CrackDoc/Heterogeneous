@@ -8,19 +8,7 @@ class CQuiSystray;
 class  CHeterogeneous : public CQuiBaseWidget
 {
     Q_OBJECT
-
-public:
-	enum ERESIZE_TYPE{
-		nodir,
-		top = 0x01,
-		bottom = 0x02,
-		left = 0x04,
-		right = 0x08,
-		topLeft = 0x01 | 0x04,
-		topRight = 0x01 | 0x08,
-		bottomLeft = 0x02 | 0x04,
-		bottomRight = 0x02 | 0x08
-	}; //更改尺寸的方向
+	
 public:
     CHeterogeneous(QWidget *parent = Q_NULLPTR);
 	~CHeterogeneous();

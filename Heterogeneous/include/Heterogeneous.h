@@ -1,11 +1,13 @@
 ﻿#ifndef Heterogeneous_h__
 #define Heterogeneous_h__
 
-#include "QuiBaseWidget.h"
+#include "QuiBaseDialog.h"
 
 class QMainWindow;
 class CQuiSystray;
-class  CHeterogeneous : public CQuiBaseWidget
+class CQuiBaseWndBar;
+
+class  CHeterogeneous : public CQuiBaseDialog
 {
     Q_OBJECT
 	
@@ -63,8 +65,12 @@ public slots:
 
 private:
 
+	CQuiBaseWndBar* m_pWidgetBar;
+
 	QMainWindow* m_pMainWindow;
 
 	CQuiSystray* m_pQuiSystray;
+signals:
+	void SignalQuit();
 };
 #endif // Heterogeneous_h__

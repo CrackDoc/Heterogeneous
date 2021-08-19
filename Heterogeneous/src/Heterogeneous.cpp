@@ -7,16 +7,77 @@
 #include <QGridLayout>
 #include "QuiTabDockWidget.h"
 #include <QHBoxLayout>
-#include <QDesktopWidget>
 #include <QApplication>
 #include <QStyle>
 #include "QuiSystray.h"
+#include "QuiBaseWndBar.h"
 
+const QString qStrWndBarStyle =
+"QWidget#content{background-color: rgb(237, 238, 238);}\n"
+"QWidget#CenterWidget{background-color: rgb(139, 139, 139);}\n"
+"QWidget:focus {outline: none}\n"
+"/*----------QTableWidget style-----------*/\n"
+"\n"
+"QTabBar::tab{height:20}\n"
+"\n"
+"QTabWidget QWidget{\n"
+"	background-color: #ffffff;\n"
+"}\n"
+"QTabWidget::pane{\n"
+"	border:none;\n"
+"}\n"
+"QTabWidget::tab-bar{\n"
+"        alignment:left;\n"
+"}\n"
+"QTabBar::tab{\n"
+"	background-color: #8b8b8b;\n"
+"	border-style:solid;\n"
+"	border-right-width:1px;\n"
+"	border-right-color:#f0f0f0;\n"
+"	color:white;\n"
+"	min-width:30ex;\n"
+"	min-height:10ex;\n"
+"}\n"
+"QTabBar::tab:hover{\n"
+"	background-color: #8b8b8b;\n"
+"	color:black;\n"
+"}\n"
+"QTabBar::tab:selected{\n"
+"	background:white;\n"
+"	color:black;\n"
+"}"
+"QPushButton{\n"
+"	border: 0px solid #9EA0A4;\n"
+"	background - color: #8B8B8B;\n"
+"	border - radius: 0px;\n"
+"	color: rgb(255, 255, 255);\n"
+"}\n"
+"QPushButton:pressed{\n"
+"	padding - right:0px;\n"
+"	padding - bottom:0px;\n"
+"	padding - top:0px;\n"
+"	padding - left:0px;\n"
+"	border: 0px solid #5388f3;"
+"	background:#F0F0F0;"
+"	color: rgb(255, 255, 255);\n"
+"}\n"
+"QPushButton:!hover{\n"
+"	border: 0px solid #5388f3;\n"
+"	background:#8B8B8B;\n"
+"	color: rgb(255, 255, 255);\n"
+"}\n"
+"QPushButton:hover{\n"
+"	border: 0px solid #5388f3;\n"
+"	background:#F0F0F0;\n"
+"	color: rgb(0, 0, 0);\n"
+"}\n";
 CHeterogeneous::CHeterogeneous(QWidget *parent)
-    : CQuiBaseWidget(parent)
+    : CQuiBaseDialog(parent)
 	, m_pMainWindow(new QMainWindow(this))
 	, m_pQuiSystray(new CQuiSystray(this))
+	, m_pWidgetBar(new CQuiBaseWndBar(this))
 {
+	this->setStyleSheet(qStrWndBarStyle);
 	this->EnableTitleBar(false);
 	this->SetDialogWidget(m_pMainWindow);
 	this->EnableDialogStretch(true);
@@ -24,7 +85,7 @@ CHeterogeneous::CHeterogeneous(QWidget *parent)
 	resize(1120, 800);
 
 	QString qstrWindowTitle = tr("CC Plane VMC vs BFCC Heterogeneous Union");
-	//this->SetDialogTitle(qstrWindowTitle);
+	this->SetDialogTitle(qstrWindowTitle);
 
 	Initialize();
 }
@@ -52,35 +113,19 @@ void CHeterogeneous::Initialize()
 	InitializeModules();
 
 }
-
-const QString qStrWndBarStyle =
-"QPushButton{"
-"	border: 0px solid #9EA0A4;"
-"	background - color: #8B8B8B;"
-"	border - radius: 0px;"
-"	color: rgb(255, 255, 255);"
-"}"
-"QPushButton:pressed{"
-"	padding - right:0px;"
-"	padding - bottom:0px;"
-"	padding - top:0px;"
-"	padding - left:0px;"
-"	border: 0px solid #5388f3;"
-"	background:#F0F0F0;"
-"	color: rgb(255, 255, 255);"
-"}"
-"QPushButton:!hover{"
-"	border: 0px solid #5388f3;"
-"	background:#8B8B8B;"
-"	color: rgb(255, 255, 255);"
-"}"
-"QPushButton:hover{"
-"	border: 0px solid #5388f3;"
-"	background:#F0F0F0;"
-"	color: rgb(0, 0, 0);"
-"}";
 void CHeterogeneous::InitializeFrameWorksUi()
 {
+	{
+		//m_pWidgetBar->SetBarBackGroundColor(QColor("#8B8B8B"));
+		m_pWidgetBar->setStyleSheet(qStrWndBarStyle);
+
+		m_pWidgetBar->Initialize();
+		m_pMainWindow->setMenuWidget(m_pWidgetBar);
+		connect(m_pWidgetBar, SIGNAL(SignalShowMinWindow()), this, SLOT(SlotShowMinWindow()));
+		connect(m_pWidgetBar, SIGNAL(SignalShowMaxWindow()), this, SLOT(SlotShowMaxWindow()));
+		connect(m_pWidgetBar, SIGNAL(SignalCloseWindow()), this, SLOT(SlotCloseWindow()));
+
+	}
 	class CTestMenuModule :public IQuiMenuModule
 	{
 	public:
@@ -210,15 +255,9 @@ void CHeterogeneous::InitializeFrameWorksUi()
 		QMenu* m_pQMenu;
 	};
 	// 设置MenuBar
-	CQuiWndBarModule* pQtWndBar = GetOrCreateQuiWndBarModule();
-
-	pQtWndBar->SetBarBackGroundColor(QColor("#8B8B8B"));
-	pQtWndBar->SetBarSyleSheet(qStrWndBarStyle);
-	pQtWndBar->Initialise();
-
-	pQtWndBar->SetGeometryWidget(this);
-
-	QWidget* bar = qobject_cast<QWidget*>(pQtWndBar);
+	CQuiWndBarModule* pWndModule = GetOrCreateQuiWndBarModule();
+	pWndModule->SetBarWndWidget(m_pWidgetBar);
+	QWidget* bar = qobject_cast<QWidget*>(pWndModule);
 
 	QMenu* pMenu0 = new QMenu(QString::fromLocal8Bit("文件"));
 	pMenu0->addAction(QString::fromLocal8Bit("打开"));
@@ -226,44 +265,37 @@ void CHeterogeneous::InitializeFrameWorksUi()
 
 	CTestMenuModule* Module0 = new CTestMenuModule();
 	Module0->SetMenu(pMenu0);
-	pQtWndBar->AppendMenuModule(Module0);
+	pWndModule->AppendMenuModule(Module0);
 
-	QMenu* pMenu1 = new QMenu(QString::fromLocal8Bit("编辑"));
+	QMenu* pMenu1 = new QMenu(QString::fromLocal8Bit("ICD"));
 	CTestMenuModule* Module1 = new CTestMenuModule();
 	Module1->SetMenu(pMenu1);
-	pQtWndBar->AppendMenuModule(Module1);
-	QMenu* pMenu2 = new QMenu(QString::fromLocal8Bit("源代码"));
+	pWndModule->AppendMenuModule(Module1);
+	QMenu* pMenu2 = new QMenu(QString::fromLocal8Bit("变量库"));
 	CTestMenuModule* Module2 = new CTestMenuModule();
 	Module2->SetMenu(pMenu2);
-	pQtWndBar->AppendMenuModule(Module2);
+	pWndModule->AppendMenuModule(Module2);
 
-	QMenu* pMenu3 = new QMenu(QString::fromLocal8Bit("重构"));
+	QMenu* pMenu3 = new QMenu(QString::fromLocal8Bit("构建"));
 	CTestMenuModule* Module3 = new CTestMenuModule();
 	Module3->SetMenu(pMenu3);
-	pQtWndBar->AppendMenuModule(Module3);
+	pWndModule->AppendMenuModule(Module3);
 	QMenu* pMenu4 = new QMenu(QString::fromLocal8Bit("浏览"));
 	CTestMenuModule* Module4 = new CTestMenuModule();
 	Module4->SetMenu(pMenu4);
-	pQtWndBar->AppendMenuModule(Module4);
-	QMenu* pMenu5 = new QMenu(QString::fromLocal8Bit("项目"));
+	pWndModule->AppendMenuModule(Module4);
+	QMenu* pMenu5 = new QMenu(QString::fromLocal8Bit("搜索"));
 	CTestMenuModule* Module5 = new CTestMenuModule();
 	Module5->SetMenu(pMenu5);
-	pQtWndBar->AppendMenuModule(Module5);
+	pWndModule->AppendMenuModule(Module5);
 	QMenu* pMenu6 = new QMenu(QString::fromLocal8Bit("窗口"));
 	CTestMenuModule* Module6 = new CTestMenuModule();
 	Module6->SetMenu(pMenu6);
-	pQtWndBar->AppendMenuModule(Module6);
+	pWndModule->AppendMenuModule(Module6);
 	QMenu* pMenu7 = new QMenu(QString::fromLocal8Bit("帮助"));
 	CTestMenuModule* Module7 = new CTestMenuModule();
 	Module7->SetMenu(pMenu7);
-	pQtWndBar->AppendMenuModule(Module7);
-
-	m_pMainWindow->setMenuWidget(bar);
-
-	connect(bar, SIGNAL(SignalShowMinWindow()), this, SLOT(SlotShowMinWindow()));
-	connect(bar, SIGNAL(SignalShowMaxWindow()), this, SLOT(SlotShowMaxWindow()));
-	connect(bar, SIGNAL(SignalCloseWindow()), this, SLOT(SlotCloseWindow()));
-
+	pWndModule->AppendMenuModule(Module7);
 }
 void CHeterogeneous::InitializeDockWidgt()
 {
@@ -277,8 +309,9 @@ void CHeterogeneous::InitializeDockWidgt()
 	contentTab->addTab(Tab0, QString::fromLocal8Bit("项目文件"));
 	QWidget* Tab1 = new QWidget(contentTab);
 	contentTab->addTab(Tab1, QString::fromLocal8Bit("资源文件"));
-	contentTab->setStyleSheet("QTabWidget#contentTab{border:1px solid rgb(139, 139, 139);}");
-	contentTab->setTabPosition(QTabWidget::TabPosition::North);
+
+	QWidget* Tab2 = new QWidget(contentTab);
+	contentTab->addTab(Tab2, QString::fromLocal8Bit("测试文件"));
 
 	pContentWidget->SetDockWidget(contentTab);
 	pContentWidget->SetDockTitle(QString::fromLocal8Bit("内容"));
@@ -346,13 +379,7 @@ void CHeterogeneous::SlotCloseWindow()
 
 void CHeterogeneous::SlotShowMaxWindow()
 {
-	QDesktopWidget* desktopWidget = QApplication::desktop();
-	//QRect screenRect = desktopWidget->screenGeometry();  //屏幕区域
-	QRect screenRect = desktopWidget->availableGeometry();  //屏幕区域
-	int w = screenRect.width() + 18;
-	int h = screenRect.height() + 18;
-	showMaximized();
-	setGeometry(-9, -9, w, h);
+	m_pWidgetBar->SetMaxWindow(true);
 }
 
 void CHeterogeneous::SlotShowMinWindow()
